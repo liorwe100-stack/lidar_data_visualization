@@ -15,7 +15,7 @@ POINT_RADIUS = 2
 SCALE = 6        # scale lidar units → pixels
 OFFSET_X = 40    # shift drawing right
 OFFSET_Y = 40    # shift drawing down
-MAX_DIST = 10    # lidar units
+MAX_DIST = 1.4     # lidar units
 CAMERA_SPEED = 10
 
 # ====================
@@ -71,16 +71,15 @@ while running:
         pygame.draw.circle(screen, POINT_COLOR, (px, py), POINT_RADIUS)
 
 
-
-    for i in range(len(points) - 1):
-        x1, y1 = points[i]
-        x2, y2 = points[i + 1]
-
-        dist = math.hypot(x2 - x1, y2 - y1)
-        if dist < MAX_DIST:
-            p1 = (int(x1 * SCALE + OFFSET_X), int(y1 * SCALE + OFFSET_Y))
-            p2 = (int(x2 * SCALE + OFFSET_X), int(y2 * SCALE + OFFSET_Y))
-            pygame.draw.line(screen, (255, 0, 255), p1, p2, 1)
+    for i in range(len(points)):
+        for j in range (i, len(points)):
+            x1, y1 = points[i]
+            x2, y2 = points[j]
+            dist = math.hypot(x2 - x1, y2 - y1)
+            if dist < MAX_DIST:
+                p1 = (int(x1 * SCALE + OFFSET_X), int(y1 * SCALE + OFFSET_Y))
+                p2 = (int(x2 * SCALE + OFFSET_X), int(y2 * SCALE + OFFSET_Y))
+                pygame.draw.line(screen, (255,0,255), p1, p2, 1)
     # points.sort(
     #     key=lambda p: math.atan2(p[1] - LIDAR_Y, p[0] - LIDAR_X)
     # )
