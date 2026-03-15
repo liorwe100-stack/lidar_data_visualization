@@ -7,6 +7,7 @@ import sys
 import math
 import robot_node
 import os
+import grid_map
 # ====================
 # Settings
 # ====================
@@ -29,6 +30,12 @@ class Visualized_lidar_map:
         self.robot_points = []
         self.load_robot_points()
         self.last_modified_time = {"robot_locations.csv": None, "lidar_apartment_2d_pointcloud.csv": None}
+        self.grid = grid_map.Grid_map(self.window_width,self.window_height,self.max_dist)
+        self.grid.receive_occupied_points(self.lidar_points)
+        # self.path = self.grid.astar((50,50), (400,400))
+        # if self.path:
+        #     self.path = self.grid.smooth_path(self.path)
+
     def check_for_updates(self, file_name: str):
         current_modified_time = os.path.getmtime(file_name)
         if self.last_modified_time[file_name] is None:
@@ -58,6 +65,7 @@ class Visualized_lidar_map:
                 y = float(row["y"])
                 robot_points.append((x, y))
         self.robot_points = robot_points
+    # def draw_points(self,point_list):
     def run_map(self):
         # ====================
         # Pygame setup
@@ -112,7 +120,12 @@ class Visualized_lidar_map:
                 px = int(x * self.scale + self.offset_x)
                 py = int(y * self.scale + self.offset_y)
                 pygame.draw.circle(screen, self.point_color, (px, py), self.point_radius)
-
+            # for i in range(len(self.path) - 1):
+            #     x1,y1 = self.path[i]
+            #     x2,y2 = self.path[i + 1]
+            #     p1 = (int(x1 * self.scale + self.offset_x), int(y1 * self.scale + self.offset_y))
+            #     p2 = (int(x2 * self.scale + self.offset_x), int(y2 * self.scale + self.offset_y))
+            #     pygame.draw.line(screen, (255, 0, 255), p1, p2, 1)
             for i in range(len(self.lidar_points) - 1):
                 for j in range (i + 1, len(self.lidar_points)):
                     x1, y1 = self.lidar_points[i]
@@ -122,6 +135,16 @@ class Visualized_lidar_map:
                         p1 = (int(x1 * self.scale + self.offset_x), int(y1 * self.scale + self.offset_y))
                         p2 = (int(x2 * self.scale + self.offset_x), int(y2 * self.scale + self.offset_y))
                         pygame.draw.line(screen, (255,0,255), p1, p2, 1)
+            for x in range(self.grid.width):
+                for y in range(self.grid.height):
+                    if self.grid.grid[x][y] == 1:
+                        px = int(x * self.scale + self.offset_x)
+                        py = int(y * self.scale + self.offset_y)
+                        pygame.draw.circle(screen,(0,0,255), (px,py), 1)
+            # for x in self.grid.grid:
+            #     for y in x:
+            #         if y == 1:
+            #             pygame.draw.circle(screen,(255,0,255), (x,y), 1)
             # lidar_points.sort(
             #     key=lambda p: math.atan2(p[1] - LIDAR_Y, p[0] - LIDAR_X)
             # )
