@@ -8,7 +8,16 @@ class Grid_map:
         self.width = width
         self.height = height
         self.grid = [[0] * height for _ in range(width)]
+
         #0- represents that there is nothing
+    # def visualize_grid(self):
+    #     for y, row in enumerate(self.grid):
+    #         line = ""
+    #         for x, cell in enumerate(row):
+    #             elif cell == 1:
+    #                 line += "█ "
+    #             else:
+    #                 line += ". "
     def receive_occupied_points(self,point_list: list[tuple]):
         grid = self.grid
         for x,y in point_list:
@@ -16,29 +25,27 @@ class Grid_map:
         for i in range(len(point_list) - 1):
             for j in range (i + 1, len(point_list)):
                 x1,y1 = point_list[i]
-                x1 = floor(x1)
-                y1 = floor(y1)
                 x2,y2 = point_list[j]
-                x2 = floor(x2)
-                y2 = floor(y2)
+                rx1, ry1,rx2,ry2= round(x1), round(y1), round(x2), round(y2) #r - rounded...
+                fx1,fy1,fx2,fy2 = floor(x1),floor(y1),floor(x2),floor(y2) #f - floored
                 dist = math.hypot(x2 - x1, y2 - y1)
                 if dist < self.max_dist:
                     if x1 != x2:  # if there is a straight line (prevents division by 0)
                         slope = round((y1 - y2) / (x1 - x2), 2)
                         # bresenham algorithm could be used
-                        for x in range(min(x1, x2), max(x1, x2)):
+                        for x in range(min(rx1,rx2), max(rx1, rx2)):
                             y = round(slope * (x - x1) + y1)
-                            self.grid[x1][y1] = 1
-                        for y in range(min(y1, y2), max(y1, y2)):
+                            self.grid[fx1][fy1] = 1
+                        for y in range(min(ry1, ry2), max(ry1, ry2)):
                             x = round((y - y1 + x1 * slope) / slope)
-                            self.grid[x1][y1] = 1
+                            self.grid[fx1][fy1] = 1
                         print(f"slope: {slope}")
                     else:
-                        for y in range(min(y1, y2), max(y1, y2)):
-                            self.grid[x1][y1] = 1
+                        for y in range(min(ry1, ry2), max(ry1, ry2)):
+                            self.grid[fx1][fy1] = 1
                         print("slope is on the y axis")
                     if x1 >= x2 and y1 >= y2:
-                        self.grid[x1][y1] = 1
+                        self.grid[fx1][fy1] = 1
 
             # print(f"{x},{y}: {grid[floor(x)][floor(y)]}")
         self.grid = grid
@@ -116,8 +123,6 @@ class Grid_map:
         while open_set:
 
             current = heapq.heappop(open_set)[1]
-            print(current)
-            print(goal)
             if current == goal:
                 path = []
                 while current in came_from:
