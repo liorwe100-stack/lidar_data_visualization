@@ -112,7 +112,7 @@ class Grid_map:
         def heuristic(a, b):
             return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
-        neighbors = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+        neighbors = [(1, 0), (-1, 0), (0, 1), (0, -1),(1,1),(1,-1),(-1,1),(-1,-1)]
 
         open_set = []
         heapq.heappush(open_set, (0, start))
