@@ -8,6 +8,7 @@ import math
 import robot_node
 import os
 import grid_map
+import astar
 # ====================
 # Settings
 # ====================
@@ -88,11 +89,13 @@ class Visualized_lidar_map:
         start = self.unscale_point(start)
         goal = self.startgoal_points["goal"]
         goal = self.unscale_point(goal)
-        path = self.grid.astar(start,goal)
-        for i in path:                      #need to fix problem if the path is a straight line on the x axis ("TypeError: 'NoneType' object is not iterable")
-            self.grid.grid[i[0]][i[1]] = 1
-            print(i[0],i[1])
-        print("finished")
+        path = astar.astar_path(self.grid.grid,start,goal)
+        if path is not None:
+            for i in path:                      #need to fix problem if the path is a straight line on the x axis ("TypeError: 'NoneType' object is not iterable")
+                self.grid.grid[i[0]][i[1]] = 1
+                print(i[0],i[1])
+            print("finished")
+
     def run_map(self):
         # ====================
         # Pygame setup

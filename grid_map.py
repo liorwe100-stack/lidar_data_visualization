@@ -101,8 +101,7 @@ class Grid_map:
         return new_path
 
     import heapq
-
-    def astar(self, start, goal):
+    def astar_old(self, start, goal): #one from the internet
         grid = self.grid
         if grid[start[0]][start[1]] == 1 or grid[goal[0]][goal[1]] == 1:
             print("Start or goal blocked")
