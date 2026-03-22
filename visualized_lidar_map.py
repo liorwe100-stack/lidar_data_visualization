@@ -5,6 +5,7 @@ import pygame
 import csv
 import sys
 import math
+from math import floor
 import robot_node
 import os
 import grid_map
@@ -92,7 +93,7 @@ class Visualized_lidar_map:
         path = astar.astar_path(self.grid.grid,start,goal)
         if path is not None:
             for i in path:                      #need to fix problem if the path is a straight line on the x axis ("TypeError: 'NoneType' object is not iterable")
-                self.grid.grid[i[0]][i[1]] = 1
+                self.grid.grid[i[0] * self.grid.grid_scale][i[1] * self.grid.grid_scale] = 1
                 print(i[0],i[1])
             print("finished")
 
@@ -182,8 +183,8 @@ class Visualized_lidar_map:
             for x in range(self.grid.width):
                 for y in range(self.grid.height):
                     if self.grid.grid[x][y] == 1:
-                        px = int(x * self.scale + self.offset_x)
-                        py = int(y * self.scale + self.offset_y)
+                        px = int(x / self.grid.grid_scale * self.scale + self.offset_x)
+                        py = int(y / self.grid.grid_scale * self.scale + self.offset_y)
                         pygame.draw.circle(self.screen,(0,0,255), (px,py), 1)
             # lidar_points.sort(
             #     key=lambda p: math.atan2(p[1] - LIDAR_Y, p[0] - LIDAR_X)

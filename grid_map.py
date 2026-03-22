@@ -7,7 +7,8 @@ class Grid_map:
         self.max_dist = max_dist
         self.width = width
         self.height = height
-        self.grid = [[0] * height for _ in range(width)]
+        self.grid_scale = 10
+        self.grid = [[0] * self.grid_scale *height for _ in range(width * self.grid_scale)]
 
         #0- represents that there is nothing
     # def visualize_grid(self):
@@ -21,31 +22,33 @@ class Grid_map:
     def receive_occupied_points(self,point_list: list[tuple]):
         grid = self.grid
         for x,y in point_list:
-            grid[floor(x)][floor(y)] = 1
-        for i in range(len(point_list) - 1):
-            for j in range (i + 1, len(point_list)):
-                x1,y1 = point_list[i]
-                x2,y2 = point_list[j]
-                rx1, ry1,rx2,ry2= round(x1), round(y1), round(x2), round(y2) #r - rounded...
-                fx1,fy1,fx2,fy2 = floor(x1),floor(y1),floor(x2),floor(y2) #f - floored
-                dist = math.hypot(x2 - x1, y2 - y1)
-                if dist < self.max_dist:
-                    if x1 != x2:  # if there is a straight line (prevents division by 0)
-                        slope = round((y1 - y2) / (x1 - x2), 2)
-                        # bresenham algorithm could be used
-                        for x in range(min(rx1,rx2), max(rx1, rx2)):
-                            y = round(slope * (x - x1) + y1)
-                            self.grid[fx1][fy1] = 1
-                        for y in range(min(ry1, ry2), max(ry1, ry2)):
-                            x = round((y - y1 + x1 * slope) / slope)
-                            self.grid[fx1][fy1] = 1
-                        print(f"slope: {slope}")
-                    else:
-                        for y in range(min(ry1, ry2), max(ry1, ry2)):
-                            self.grid[fx1][fy1] = 1
-                        print("slope is on the y axis")
-                    if x1 >= x2 and y1 >= y2:
-                        self.grid[fx1][fy1] = 1
+            grid[int(x * self.grid_scale)][int(y * self.grid_scale)] = 1
+        # for i in range(len(point_list) - 1):
+        #     for j in range (i + 1, len(point_list)):
+        #         x1,y1 = point_list[i]
+        #         x2,y2 = point_list[j]
+        #         rx1, ry1,rx2,ry2= round(x1), round(y1), round(x2), round(y2) #r - rounded...
+        #         fx1,fy1,fx2,fy2 = floor(x1),floor(y1),floor(x2),floor(y2) #f - floored
+        #         dist = math.hypot(x2 - x1, y2 - y1)
+                # if dist < self.max_dist:
+                #     if x1 != x2:  # if there is a straight line (prevents division by 0)
+                #         slope = round((y1 - y2) / (x1 - x2), 2)
+                #         # bresenham algorithm could be used
+                #         for x in range(min(rx1,rx2), max(rx1, rx2)):
+                #             y = round(slope * (x - x1) + y1)
+                #             # self.grid[x][y] = 1
+                #             self.grid[fx1][fy1] = 1
+                #         for y in range(min(ry1, ry2), max(ry1, ry2)):
+                #             x = round((y - y1 + x1 * slope) / slope)
+                #             # self.grid[x][y] = 1
+                #             self.grid[fx1][fy1] = 1
+                #         print(f"slope: {slope}")
+                #     else:
+                #         for y in range(min(ry1, ry2), max(ry1, ry2)):
+                #             self.grid[fx1][fy1] = 1
+                #         print("slope is on the y axis")
+                #     if x1 >= x2 and y1 >= y2:
+                #         self.grid[fx1][fy1] = 1
 
             # print(f"{x},{y}: {grid[floor(x)][floor(y)]}")
         self.grid = grid
